@@ -1,0 +1,6 @@
+@GettingStartedMassTransit.Web_HostAddress = http://localhost:5192
+
+GET {{GettingStartedMassTransit.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
