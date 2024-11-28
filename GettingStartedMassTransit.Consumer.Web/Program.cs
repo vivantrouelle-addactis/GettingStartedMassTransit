@@ -1,21 +1,24 @@
-using MassTransit;
-using Amazon.Runtime;
 using GettingStartedMassTransit.Common.EventBus.Abstractions;
 using GettingStartedMassTransit.Common.EventBus;
+using MassTransit;
+using Amazon.Runtime;
+using GettingStartedMassTransit.Consumer.Web.Consumer;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders().AddConsole();
 
 // Add services to the container.
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddMassTransit(x =>
 {
     //x.AddConsumer<EventConsumer>();
+    x.AddConsumer<MessageEventWithJsonConsumer>();
+    x.AddConsumer<MessageEventWithJsonObjectConsumer>();
+    x.AddConsumer<MessageEventOtherTypeConsumer>();
 
     if (bool.Parse(builder.Configuration["enabledSaaS"]!))
     {
@@ -29,6 +32,21 @@ builder.Services.AddMassTransit(x =>
             });
 
             //cfg.ConfigureEndpoints(context);
+            cfg.ReceiveEndpoint("message-event-queue", e =>
+            {
+                e.ConfigureConsumer<MessageEventWithJsonConsumer>(context);
+                e.ConfigureConsumer<MessageEventWithJsonObjectConsumer>(context);
+                e.ConfigureConsumer<MessageEventOtherTypeConsumer>(context);
+                //e.ConfigureConsumeTopology = false;
+
+                /*
+                e.Subscribe("message-event", s =>
+                {
+                    s.TopicAttributes["DisplayName"] = "Message Event Topic";
+                    s.TopicTags.Add("environment", "development");
+                });
+                */
+            });
         });
     }
     else
@@ -46,6 +64,7 @@ builder.Services.AddMassTransit(x =>
     }
 });
 builder.Services.AddTransient<IEventBus, EventBus>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
