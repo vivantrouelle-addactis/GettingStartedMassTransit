@@ -12,7 +12,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddMassTransit(x =>
 {
     //x.AddConsumer<EventConsumer>();
@@ -23,23 +22,26 @@ builder.Services.AddMassTransit(x =>
         {
             cfg.Host(builder.Configuration["AWS:region"], h =>
             {
-                //h.AccessKey(builder.Configuration["AWS:accessKeyID"]);
-                //h.SecretKey(builder.Configuration["AWS:secretAccessKey"]);
                 h.Credentials(new SessionAWSCredentials(builder.Configuration["AWS:accessKeyID"], builder.Configuration["AWS:secretAccessKey"], builder.Configuration["AWS:sessionToken"]));
             });
 
-            //cfg.ConfigureEndpoints(context);
+            //cfg.UseBsonSerializer();
+            //cfg.DefaultContentType = new System.Net.Mime.ContentType("application/vnd.masstransit+bson");
+            cfg.ConfigureEndpoints(context);
         });
     }
     else
     {
         x.UsingRabbitMq((context, cfg) =>
         {
+            
             cfg.Host("localhost", "/", h =>
             {
                 h.Username("guest");
                 h.Password("guest");
             });
+
+            //cfg.UseBsonSerializer();
 
             cfg.ConfigureEndpoints(context);
         });
