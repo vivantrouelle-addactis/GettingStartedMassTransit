@@ -61,8 +61,9 @@ Ajout une policie custom
 
 Recupération des credentials
 
-
-# Passage de donner générique
+# Recherche
+## Exemple de passage de données génériques dans un bus avec MassTransit
+### Exemple 1
 
 Pour passer des données génériques dans un bus avec MassTransit, vous pouvez utiliser des messages génériques en définissant des interfaces ou des classes génériques. Voici un exemple de comment vous pouvez le faire :
 
@@ -87,7 +88,7 @@ Pour passer des données génériques dans un bus avec MassTransit, vous pouvez 
    }
    ```
 
-3. **Envoyer un Message Générique** :
+3. **Envoyer un Message Générique sur un queue spécifique** :
    ```csharp
    public async Task SendMessage<T>(IBusControl bus, T data)
    {
@@ -109,7 +110,7 @@ Pour passer des données génériques dans un bus avec MassTransit, vous pouvez 
    }
    ```
 
-5. **Configurer le Bus et les Consommateurs** :
+5. **Configurer le Bus et les Consommateurs pour conssomer les messages sur une queue spécifique** :
    ```csharp
    public void ConfigureServices(IServiceCollection services)
    {
@@ -134,6 +135,7 @@ Si vous avez des questions spécifiques ou des cas d'utilisation particuliers, n
 [1](https://markgossa.com/2022/06/masstransit-and-mediatr.html): MassTransit Documentation
 [2](https://github.com/MassTransit/MassTransit/discussions/3694): [GitHub Discussion on Generic Messages](https://github.com/MassTransit/MassTransit/discussions/3694)
 
+### Exemple 2
 Pour passer des données génériques dans un bus avec MassTransit en utilisant Amazon SQS, vous pouvez suivre ces étapes :
 
 1. **Définir une Interface Générique** :
@@ -213,9 +215,7 @@ Si vous avez des questions spécifiques ou des cas d'utilisation particuliers, n
 https://github.com/davidbytyqi1/DotNETRabbitMQ/blob/master/QueueSenderService/Controllers/QueueSenderController.cs
 https://medium.com/@david.bytyqi/net-core-8-with-rabbitmq-and-masstransit-77899c27fd79
 
-
-
-# Protocole d'échange de data tel que JSON mais qui garde le type de donnée : Protobuf
+## Protocole d'échange de data tel que JSON mais qui garde le type de donnée : Protobuf
 
 * Protocol Buffers (Protobuf) :
     Protocole de sérialisation développé par Google.
@@ -236,7 +236,7 @@ https://medium.com/@david.bytyqi/net-core-8-with-rabbitmq-and-masstransit-77899c
 	https://avro.apache.org/
   https://github.com/AdrianStrugala/AvroConvert
 
-# Format d'échange géré par Mass transit et intégré à dotnet : Bson
+## Format d'échange géré par Mass transit et intégré à dotnet : Bson
 Utilisé du bson pour la sérialisation des messages dans MassTransit.
 
 ```csharp
@@ -311,7 +311,7 @@ https://masstransit.io/documentation/configuration/serialization
 
 **TODO** : Checker la bon typage des données de cette objet mongodb une fois insérer en base de données
 
-# Configuration avec Mass transit et une seule queue
+## Configuration avec Mass transit et une seule queue
 
 Oui, bien sûr ! Voici un exemple d'utilisation de MassTransit avec une seule queue mais plusieurs types de messages :
 
@@ -396,7 +396,7 @@ Avec cette configuration, MassTransit utilisera une seule queue (`single_queue`)
 
 Est-ce que cela répond à votre question ? Avez-vous besoin de plus de détails sur un aspect particulier ?
 
-# JsonObject
+## Serialisation via un JsonObject
 
 `JsonObject` et `JsonNode` sont tous deux des composants de la bibliothèque `System.Text.Json` en .NET, mais ils ont des rôles et des utilisations légèrement différents :
 
@@ -486,6 +486,7 @@ Les scénarios d'utilisation typiques pour `JsonObject` et `JsonNode` en .NET in
 
 Ces scénarios montrent comment `JsonObject` et `JsonNode` peuvent être utilisés pour manipuler des données JSON de manière flexible et efficace dans différentes situations.
 
+## Sauvegarde du type de chaque élément dans un JsonObject
 Oui, il est possible de sauvegarder le type de chaque élément dans un `JsonObject` en ajoutant des métadonnées sur les types. Une approche courante consiste à inclure des informations sur le type dans les propriétés de l'objet JSON. Voici un exemple de comment vous pouvez le faire :
 
 1. **Ajouter des métadonnées de type** :
@@ -574,7 +575,8 @@ Oui, il est possible de sauvegarder le type de chaque élément dans un `JsonObj
 
 Ces méthodes vous permettent de sauvegarder et de récupérer les types de chaque élément dans un `JsonObject`, ce qui peut être utile pour des scénarios où vous devez conserver des informations de type dynamiques.
 
-Bien sûr ! La sérialisation de la classe `TypedProperty` en JSON implique la conversion d'une instance de cette classe en une chaîne JSON. Voici comment vous pouvez le faire en utilisant `System.Text.Json` :
+## Sérialisation de la classe TypedProperty en JSON
+La sérialisation de la classe `TypedProperty` en JSON implique la conversion d'une instance de cette classe en une chaîne JSON. Voici comment vous pouvez le faire en utilisant `System.Text.Json` :
 
 1. **Définir la classe `TypedProperty`** :
    Cette classe contient deux propriétés : `Value` pour la valeur de la propriété et `Type` pour le type de la propriété.
@@ -678,8 +680,10 @@ Bien sûr ! La sérialisation de la classe `TypedProperty` en JSON implique la c
 
 Cette approche vous permet de sérialiser et désérialiser des propriétés avec leurs types, ce qui peut être utile pour des scénarios où vous devez conserver des informations de type dynamiques.
 
+# Soluton de serialisation et désérialisation de données en passant le type de données dans le message
 
-# Test
+```csharp
+# 
 
 Au niveau du publisher, on peut envoyer un message de type `ApplicationDeltaEntity` ou `ApplicationTetaEntity` en utilisant le endpoint `POST /api/audittrailevent/publish`
 
