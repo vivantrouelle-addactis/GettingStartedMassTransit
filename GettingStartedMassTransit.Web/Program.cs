@@ -14,8 +14,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMassTransit(x =>
 {
-    //x.AddConsumer<EventConsumer>();
-
     if (bool.Parse(builder.Configuration["enabledSaaS"]!))
     {
         x.UsingAmazonSqs((context, cfg) =>
